@@ -1,6 +1,7 @@
 import axios from 'axios'
 // import {Message} from 'element-ui' //引入element的消息框，用于post修改请求时的消息提示，可选
 import { Confirm, Alert, Toast, Notify, Loading } from 'vue-ydui/dist/lib.rem/dialog';
+require("promise.prototype.finally").shim();
 // import store from '@/store/store.js' //引入vuex中的状态，引用名和路径根据项目实际情况，可选
 var domain = '/agent'; //api域名 
 var FileHost=''; //图片上传域名
@@ -18,14 +19,11 @@ function dataGet(apiName, params, callback){
   var obj = initFn(params, callback, arguments[1]); //init方法实现见后
   var nparams = obj.nparams;
   callback = obj.callback;
-  // Loading.open('加载中...');
+  Loading.open('加载中...');
   
   axios.get(url, {params: nparams}).then((response) => {
       var all = response.data; //返回所有数据
       var data = response.data.data; //根据后端实际返回修改
-      setTimeout(() => {  //根据实际请求情况更改
-        Loading.close();
-      }, 800);
       //根据后端实际返回修改
       if(all.code==200){ //成功
           if(callback) callback(data, all);
@@ -40,6 +38,8 @@ function dataGet(apiName, params, callback){
   }).catch((error)=>{
       console.log("--------------------");    
       console.log(error);    
+  }).finally(()=>{ //单独处理loading
+    Loading.close();
   });
 }
 //封装delete方法
@@ -48,6 +48,7 @@ function dataDelete(apiName, params, callback){
   var obj = initFn(params, callback, arguments[1]); //init方法实现见后
   var nparams = obj.nparams;
   callback = obj.callback;
+  Loading.open('删除中请稍后...');
   axios.delete(url, {params: nparams}).then((response) => {
       var all = response.data; //返回所有数据
       var data = response.data.data; //根据后端实际返回修改
@@ -61,6 +62,8 @@ function dataDelete(apiName, params, callback){
   }).catch((error)=>{
       console.log("--------------------");    
       console.log(error);    
+  }).finally(()=>{ //单独处理loading
+    Loading.close();
   });
 }
 //封装post方法
@@ -69,6 +72,7 @@ function dataPost(apiName, params, callback){
   var obj = initFn(params, callback, arguments[1]);
   var nparams = obj.nparams;
   callback = obj.callback;
+  Loading.open('提交中请稍后...');
   axios.post(url, nparams).then((response) => {
       var all = response.data;
       var data = response.data.data; //根据后端实际返回修改
@@ -80,6 +84,8 @@ function dataPost(apiName, params, callback){
       } 
   }).catch((error)=>{
       console.log(error);
+  }).finally(()=>{ //单独处理loading
+    Loading.close();
   });
 }
 //封装带消息提示的post方法
@@ -109,6 +115,8 @@ function dataPostXD(apiName, params, callback){
       console.log(error);
       Loading.close();
       Toast({mes: '操作失败！', icon: 'error'});
+  }).finally(()=>{ //单独处理loading
+    Loading.close();
   });
 }
 //initFn方法
