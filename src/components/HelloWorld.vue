@@ -1,15 +1,11 @@
 <template>
   <div class="hello">
     <h1>{{ msg }}</h1>
+    
     <h2>Essential Links</h2>
     <ul>
       <li>
-        <a
-          href="https://vuejs.org"
-          target="_blank"
-        >
-          Core Docs
-        </a>
+        <router-link to="/"><h1>index</h1> </router-link>
       </li>
       <li>
         <a
@@ -90,6 +86,7 @@ export default {
   name: 'HelloWorld',
   data () {
     return {
+      pageNo:1,
       msg: 'Welcome to Your Vue.js App'
     }
   },
@@ -104,10 +101,8 @@ export default {
   methods: {
     
     getNewsList() {
-      dataGet("/api/game/questionnaire/checkIsIn",{
-        pageNo: this.pageNo,
-        pageSize:10
-       },(data, all) => {
+      let data = {"pageNo":this.pageNo,"pageSize":100};
+      dataGet("/news/getList",data,(data, all) => {
         
       });
     },
